@@ -31,14 +31,12 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({ children })
   const [network, setNetwork] = useState<WalletAdapterNetwork>(WalletAdapterNetwork.Devnet);
 
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-
-  // Standard wallet adapters are detected automatically via the Solana Wallet Standard
   const wallets = useMemo(() => [], []);
 
   return (
     <NetworkContext.Provider value={{ network, setNetwork, endpoint }}>
       <ConnectionProviderComponent endpoint={endpoint}>
-        <WalletProviderComponent wallets={wallets} autoConnect>
+        <WalletProviderComponent wallets={wallets} autoConnect={false}>
           <WalletModalProviderComponent>{children}</WalletModalProviderComponent>
         </WalletProviderComponent>
       </ConnectionProviderComponent>

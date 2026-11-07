@@ -1,11 +1,24 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { ShieldCheck, Zap, Activity, Cpu } from 'lucide-react';
+import { ShieldCheck, Activity, Cpu } from 'lucide-react';
 import { useSolanaNetwork } from './WalletContextProvider';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+
+// Dynamically import WalletMultiButton with SSR disabled to prevent hydration ChunkLoadError
+const WalletMultiButtonDynamic = dynamic(
+  async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
+  {
+    ssr: false,
+    loading: () => (
+      <button className="bg-solana-gradient text-black font-bold text-xs h-9 px-4 rounded-xl opacity-80 cursor-wait">
+        Select Wallet
+      </button>
+    ),
+  }
+);
 
 export const Navbar = () => {
   const { connected } = useWallet();
@@ -63,7 +76,7 @@ export const Navbar = () => {
           </select>
 
           {/* Wallet Button */}
-          <WalletMultiButton className="!bg-solana-gradient !text-black !font-bold !text-xs !h-9 !px-4 !rounded-xl !shadow-md hover:!opacity-95" />
+          <WalletMultiButtonDynamic className="!bg-solana-gradient !text-black !font-bold !text-xs !h-9 !px-4 !rounded-xl !shadow-md hover:!opacity-95" />
         </div>
       </div>
     </header>
